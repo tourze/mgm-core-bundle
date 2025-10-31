@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # 仅允许注册测试数据的 DataFixtures
+    Tourze\MgmCoreBundle\DataFixtures\:
+        resource: '../../DataFixtures/*'
+        tags: ['doctrine.fixture.orm']

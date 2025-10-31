@@ -1,0 +1,43 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  # Service classes
+  Tourze\MgmCoreBundle\Service\AttributionService: ~
+  Tourze\MgmCoreBundle\Service\IdempotencyService: ~
+  Tourze\MgmCoreBundle\Service\MgmManagerService: ~
+  Tourze\MgmCoreBundle\Service\ReferralService: ~
+  Tourze\MgmCoreBundle\Service\SystemClock: ~
+  Tourze\MgmCoreBundle\Service\UlidGenerator: ~
+
+  # Repository classes
+  Tourze\MgmCoreBundle\Repository\AttributionTokenRepository: ~
+  Tourze\MgmCoreBundle\Repository\CampaignRepository: ~
+  Tourze\MgmCoreBundle\Repository\IdempotencyKeyRepository: ~
+  Tourze\MgmCoreBundle\Repository\LedgerRepository: ~
+  Tourze\MgmCoreBundle\Repository\QualificationRepository: ~
+  Tourze\MgmCoreBundle\Repository\ReferralRepository: ~
+  Tourze\MgmCoreBundle\Repository\RewardRepository: ~
+
+  # Admin Controller classes
+  Tourze\MgmCoreBundle\Controller\Admin\AttributionTokenCrudController: ~
+  Tourze\MgmCoreBundle\Controller\Admin\CampaignCrudController: ~
+  Tourze\MgmCoreBundle\Controller\Admin\IdempotencyKeyCrudController: ~
+  Tourze\MgmCoreBundle\Controller\Admin\LedgerCrudController: ~
+  Tourze\MgmCoreBundle\Controller\Admin\QualificationCrudController: ~
+  Tourze\MgmCoreBundle\Controller\Admin\ReferralCrudController: ~
+  Tourze\MgmCoreBundle\Controller\Admin\RewardCrudController: ~
+
+  # Admin Service classes
+  Tourze\MgmCoreBundle\Service\AdminMenu: ~
+
+  # Interface bindings
+  Tourze\MgmCoreBundle\Service\ClockInterface: '@Tourze\MgmCoreBundle\Service\SystemClock'
+  Tourze\MgmCoreBundle\Service\IdGeneratorInterface: '@Tourze\MgmCoreBundle\Service\UlidGenerator'
+
+  # Public services
+  mgm.core.manager:
+    class: Tourze\MgmCoreBundle\Service\MgmManagerService
+    public: true
+

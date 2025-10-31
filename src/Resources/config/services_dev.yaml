@@ -1,0 +1,6 @@
+services:
+    # DataFixtures for development environment
+    Tourze\MgmCoreBundle\DataFixtures\:
+        resource: '../../DataFixtures/*'
+        tags: ['doctrine.fixture.orm']
+        autoconfigure: true

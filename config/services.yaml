@@ -1,0 +1,28 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Service classes
+    Tourze\MgmCoreBundle\Service\AttributionService: ~
+    Tourze\MgmCoreBundle\Service\IdempotencyService: ~
+    Tourze\MgmCoreBundle\Service\MgmManagerService: ~
+    Tourze\MgmCoreBundle\Service\ReferralService: ~
+    Tourze\MgmCoreBundle\Service\SystemClock: ~
+    Tourze\MgmCoreBundle\Service\UlidGenerator: ~
+
+    # Repository classes
+    Tourze\MgmCoreBundle\Repository\AttributionTokenRepository: ~
+    Tourze\MgmCoreBundle\Repository\CampaignRepository: ~
+    Tourze\MgmCoreBundle\Repository\IdempotencyKeyRepository: ~
+    Tourze\MgmCoreBundle\Repository\ReferralRepository: ~
+
+    # Interface bindings
+    Tourze\MgmCoreBundle\Service\ClockInterface: '@Tourze\MgmCoreBundle\Service\SystemClock'
+    Tourze\MgmCoreBundle\Service\IdGeneratorInterface: '@Tourze\MgmCoreBundle\Service\UlidGenerator'
+
+    # Public services for testing
+    mgm.core.manager:
+        class: Tourze\MgmCoreBundle\Service\MgmManagerService
+        public: true
