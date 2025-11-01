@@ -62,8 +62,7 @@ final class LedgerCrudControllerTest extends AbstractEasyAdminControllerTestCase
 
     public function testIndexPage(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
         $crawler = $client->request('GET', '/admin');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -77,8 +76,7 @@ final class LedgerCrudControllerTest extends AbstractEasyAdminControllerTestCase
 
     public function testCreateLedger(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
         $client->request('GET', '/admin');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 

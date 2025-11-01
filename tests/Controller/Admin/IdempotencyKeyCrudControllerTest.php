@@ -60,8 +60,7 @@ final class IdempotencyKeyCrudControllerTest extends AbstractEasyAdminController
 
     public function testIndexPage(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
         $crawler = $client->request('GET', '/admin');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -75,8 +74,7 @@ final class IdempotencyKeyCrudControllerTest extends AbstractEasyAdminController
 
     public function testCreateIdempotencyKey(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
         $client->request('GET', '/admin');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
