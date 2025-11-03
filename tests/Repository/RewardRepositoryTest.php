@@ -273,8 +273,19 @@ class RewardRepositoryTest extends AbstractRepositoryTestCase
         $this->assertSame(250.50, $spec['amount']);
         $this->assertArrayHasKey('validity', $spec);
         $this->assertArrayHasKey('restrictions', $spec);
+
+        $this->assertIsArray($spec['validity']);
+        $this->assertArrayHasKey('start_date', $spec['validity']);
         $this->assertSame('2023-12-01', $spec['validity']['start_date']);
+
+        $this->assertIsArray($spec['restrictions']);
+        $this->assertArrayHasKey('categories', $spec['restrictions']);
+        $this->assertIsArray($spec['restrictions']['categories']);
         $this->assertCount(2, $spec['restrictions']['categories']);
+
+        $this->assertArrayHasKey('metadata', $spec);
+        $this->assertIsArray($spec['metadata']);
+        $this->assertArrayHasKey('campaign_id', $spec['metadata']);
         $this->assertSame('holiday-2023', $spec['metadata']['campaign_id']);
     }
 

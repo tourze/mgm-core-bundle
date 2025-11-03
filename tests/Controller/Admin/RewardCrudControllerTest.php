@@ -358,11 +358,39 @@ final class RewardCrudControllerTest extends AbstractEasyAdminControllerTestCase
 
         $rewardData = $savedReward->getSpecJson();
         $this->assertIsArray($rewardData);
+
+        // Test cash component
+        $this->assertArrayHasKey('cash_component', $rewardData);
+        $this->assertIsArray($rewardData['cash_component']);
+        $this->assertArrayHasKey('amount', $rewardData['cash_component']);
         $this->assertEquals(100.00, $rewardData['cash_component']['amount']);
+
+        // Test points component
+        $this->assertArrayHasKey('points_component', $rewardData);
+        $this->assertIsArray($rewardData['points_component']);
+        $this->assertArrayHasKey('amount', $rewardData['points_component']);
         $this->assertEquals(500, $rewardData['points_component']['amount']);
+
+        // Test bonus items
+        $this->assertArrayHasKey('bonus_items', $rewardData);
+        $this->assertIsArray($rewardData['bonus_items']);
+        $this->assertArrayHasKey('vouchers', $rewardData['bonus_items']);
+        $this->assertIsArray($rewardData['bonus_items']['vouchers']);
         $this->assertCount(2, $rewardData['bonus_items']['vouchers']);
+
+        $this->assertArrayHasKey('privileges', $rewardData['bonus_items']);
+        $this->assertIsArray($rewardData['bonus_items']['privileges']);
+        $this->assertArrayHasKey('vip_status', $rewardData['bonus_items']['privileges']);
         $this->assertTrue($rewardData['bonus_items']['privileges']['vip_status']);
+
+        // Test metadata
+        $this->assertArrayHasKey('metadata', $rewardData);
+        $this->assertIsArray($rewardData['metadata']);
+        $this->assertArrayHasKey('campaign_version', $rewardData['metadata']);
         $this->assertEquals('2.1.0', $rewardData['metadata']['campaign_version']);
+
+        $this->assertArrayHasKey('applied_rules', $rewardData['metadata']);
+        $this->assertIsArray($rewardData['metadata']['applied_rules']);
         $this->assertContains('new_user_bonus', $rewardData['metadata']['applied_rules']);
     }
 

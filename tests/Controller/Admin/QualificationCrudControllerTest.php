@@ -160,14 +160,24 @@ final class QualificationCrudControllerTest extends AbstractEasyAdminControllerT
         $this->assertEquals('referral-qualified-001', $savedQualification1->getReferralId());
         $this->assertEquals(Decision::QUALIFIED, $savedQualification1->getDecision());
         $this->assertEquals('所有验证通过', $savedQualification1->getReason());
-        $this->assertEquals(85, $savedQualification1->getEvidenceJson()['scores']['creditScore']);
+        $evidence1 = $savedQualification1->getEvidenceJson();
+        $this->assertIsArray($evidence1);
+        $this->assertArrayHasKey('scores', $evidence1);
+        $this->assertIsArray($evidence1['scores']);
+        $this->assertArrayHasKey('creditScore', $evidence1['scores']);
+        $this->assertEquals(85, $evidence1['scores']['creditScore']);
 
         $savedQualification2 = $qualificationRepository->find($qualification2->getId());
         $this->assertNotNull($savedQualification2);
         $this->assertEquals('referral-rejected-001', $savedQualification2->getReferralId());
         $this->assertEquals(Decision::REJECTED, $savedQualification2->getDecision());
         $this->assertEquals('信用评分不足', $savedQualification2->getReason());
-        $this->assertEquals(45, $savedQualification2->getEvidenceJson()['scores']['creditScore']);
+        $evidence2 = $savedQualification2->getEvidenceJson();
+        $this->assertIsArray($evidence2);
+        $this->assertArrayHasKey('scores', $evidence2);
+        $this->assertIsArray($evidence2['scores']);
+        $this->assertArrayHasKey('creditScore', $evidence2['scores']);
+        $this->assertEquals(45, $evidence2['scores']['creditScore']);
     }
 
     public function testQualificationDecisionHandling(): void
@@ -276,10 +286,33 @@ final class QualificationCrudControllerTest extends AbstractEasyAdminControllerT
         $this->assertArrayHasKey('business_rules', $evidence);
 
         // Test nested values
+        $this->assertArrayHasKey('user_profile', $evidence);
+        $this->assertIsArray($evidence['user_profile']);
+        $this->assertArrayHasKey('name', $evidence['user_profile']);
         $this->assertEquals('张三', $evidence['user_profile']['name']);
+
+        $this->assertArrayHasKey('verification_results', $evidence);
+        $this->assertIsArray($evidence['verification_results']);
+        $this->assertArrayHasKey('identity_check', $evidence['verification_results']);
+        $this->assertIsArray($evidence['verification_results']['identity_check']);
+        $this->assertArrayHasKey('confidence', $evidence['verification_results']['identity_check']);
         $this->assertEquals(0.98, $evidence['verification_results']['identity_check']['confidence']);
+
+        $this->assertArrayHasKey('financial_check', $evidence['verification_results']);
+        $this->assertIsArray($evidence['verification_results']['financial_check']);
+        $this->assertArrayHasKey('credit_score', $evidence['verification_results']['financial_check']);
         $this->assertEquals(750, $evidence['verification_results']['financial_check']['credit_score']);
+
+        $this->assertArrayHasKey('business_rules', $evidence);
+        $this->assertIsArray($evidence['business_rules']);
+        $this->assertArrayHasKey('age_requirement', $evidence['business_rules']);
+        $this->assertIsArray($evidence['business_rules']['age_requirement']);
+        $this->assertArrayHasKey('passed', $evidence['business_rules']['age_requirement']);
         $this->assertTrue($evidence['business_rules']['age_requirement']['passed']);
+
+        $this->assertArrayHasKey('metadata', $evidence);
+        $this->assertIsArray($evidence['metadata']);
+        $this->assertArrayHasKey('version', $evidence['metadata']);
         $this->assertEquals('1.2.0', $evidence['metadata']['version']);
     }
 

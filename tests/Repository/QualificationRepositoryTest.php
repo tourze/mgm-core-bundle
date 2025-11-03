@@ -233,8 +233,17 @@ class QualificationRepositoryTest extends AbstractRepositoryTestCase
         $this->assertIsArray($evidence);
         $this->assertArrayHasKey('user_info', $evidence);
         $this->assertArrayHasKey('order_details', $evidence);
+
+        $this->assertIsArray($evidence['user_info']);
+        $this->assertArrayHasKey('verified', $evidence['user_info']);
         $this->assertTrue($evidence['user_info']['verified']);
+
+        $this->assertIsArray($evidence['order_details']);
         $this->assertCount(2, $evidence['order_details']);
+
+        $this->assertArrayHasKey(0, $evidence['order_details']);
+        $this->assertIsArray($evidence['order_details'][0]);
+        $this->assertArrayHasKey('amount', $evidence['order_details'][0]);
         $this->assertSame(150.75, $evidence['order_details'][0]['amount']);
     }
 

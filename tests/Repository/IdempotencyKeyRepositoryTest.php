@@ -133,8 +133,19 @@ class IdempotencyKeyRepositoryTest extends AbstractRepositoryTestCase
         $result = $found->getResultJson();
         $this->assertIsArray($result);
         $this->assertSame('reward_grant', $result['operation']);
+
+        $this->assertArrayHasKey('rewards', $result);
+        $this->assertIsArray($result['rewards']);
         $this->assertCount(2, $result['rewards']);
+
+        $this->assertArrayHasKey(0, $result['rewards']);
+        $this->assertIsArray($result['rewards'][0]);
+        $this->assertArrayHasKey('amount', $result['rewards'][0]);
         $this->assertSame(100, $result['rewards'][0]['amount']);
+
+        $this->assertArrayHasKey('metadata', $result);
+        $this->assertIsArray($result['metadata']);
+        $this->assertArrayHasKey('campaign_id', $result['metadata']);
         $this->assertSame('campaign-abc', $result['metadata']['campaign_id']);
     }
 

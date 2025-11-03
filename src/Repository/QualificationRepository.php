@@ -29,9 +29,12 @@ class QualificationRepository extends ServiceEntityRepository
         return $this->findBy(['referralId' => $referralId]);
     }
 
+    /**
+     * @return Qualification|null
+     */
     public function findLatestByReferralId(string $referralId): ?Qualification
     {
-        return $this->createQueryBuilder('q')
+        $result = $this->createQueryBuilder('q')
             ->where('q.referralId = :referralId')
             ->orderBy('q.occurTime', 'DESC')
             ->setParameter('referralId', $referralId)
@@ -39,6 +42,8 @@ class QualificationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+
+        return $result instanceof Qualification ? $result : null;
     }
 
     public function countByDecision(Decision $decision): int

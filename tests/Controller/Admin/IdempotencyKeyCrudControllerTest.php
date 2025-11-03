@@ -93,8 +93,11 @@ final class IdempotencyKeyCrudControllerTest extends AbstractEasyAdminController
         $savedKey = $idempotencyKeyRepository->findOneBy(['key' => $idempotencyKey->getKey(), 'scope' => 'test-scope']);
         $this->assertNotNull($savedKey);
         $this->assertEquals('test-scope', $savedKey->getScope());
-        $this->assertArrayHasKey('status', $savedKey->getResultJson());
-        $this->assertEquals('success', $savedKey->getResultJson()['status']);
+
+        $result = $savedKey->getResultJson();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('status', $result);
+        $this->assertEquals('success', $result['status']);
     }
 
     public function testIdempotencyKeyDataPersistence(): void
@@ -134,14 +137,25 @@ final class IdempotencyKeyCrudControllerTest extends AbstractEasyAdminController
         $savedKey1 = $idempotencyKeyRepository->findOneBy(['key' => $key1->getKey()]);
         $this->assertNotNull($savedKey1);
         $this->assertEquals('reward-processing', $savedKey1->getScope());
-        $this->assertEquals(100, $savedKey1->getResultJson()['amount']);
-        $this->assertEquals('completed', $savedKey1->getResultJson()['status']);
+
+        $result1 = $savedKey1->getResultJson();
+        $this->assertIsArray($result1);
+        $this->assertArrayHasKey('amount', $result1);
+        $this->assertEquals(100, $result1['amount']);
+        $this->assertArrayHasKey('status', $result1);
+        $this->assertEquals('completed', $result1['status']);
 
         $savedKey2 = $idempotencyKeyRepository->findOneBy(['key' => $key2->getKey()]);
         $this->assertNotNull($savedKey2);
         $this->assertEquals('qualification-check', $savedKey2->getScope());
-        $this->assertTrue($savedKey2->getResultJson()['qualified']);
-        $this->assertContains('age', $savedKey2->getResultJson()['checks_passed']);
+
+        $result2 = $savedKey2->getResultJson();
+        $this->assertIsArray($result2);
+        $this->assertArrayHasKey('qualified', $result2);
+        $this->assertTrue($result2['qualified']);
+        $this->assertArrayHasKey('checks_passed', $result2);
+        $this->assertIsArray($result2['checks_passed']);
+        $this->assertContains('age', $result2['checks_passed']);
     }
 
     public function testIdempotencyKeyUniqueConstraint(): void
@@ -172,11 +186,19 @@ final class IdempotencyKeyCrudControllerTest extends AbstractEasyAdminController
         // Verify both keys exist with different scopes
         $savedKey1 = $idempotencyKeyRepository->findOneBy(['key' => $baseKey, 'scope' => 'scope-a']);
         $this->assertNotNull($savedKey1);
-        $this->assertEquals('first', $savedKey1->getResultJson()['result']);
+
+        $result1 = $savedKey1->getResultJson();
+        $this->assertIsArray($result1);
+        $this->assertArrayHasKey('result', $result1);
+        $this->assertEquals('first', $result1['result']);
 
         $savedKey2 = $idempotencyKeyRepository->findOneBy(['key' => $baseKey, 'scope' => 'scope-b']);
         $this->assertNotNull($savedKey2);
-        $this->assertEquals('second', $savedKey2->getResultJson()['result']);
+
+        $result2 = $savedKey2->getResultJson();
+        $this->assertIsArray($result2);
+        $this->assertArrayHasKey('result', $result2);
+        $this->assertEquals('second', $result2['result']);
     }
 
     public function testIdempotencyKeyJsonResultHandling(): void
@@ -221,10 +243,24 @@ final class IdempotencyKeyCrudControllerTest extends AbstractEasyAdminController
 
         $result = $savedKey->getResultJson();
         $this->assertIsArray($result);
+        $this->assertArrayHasKey('operation', $result);
         $this->assertEquals('batch_reward_distribution', $result['operation']);
+
+        $this->assertArrayHasKey('results', $result);
+        $this->assertIsArray($result['results']);
+        $this->assertArrayHasKey('total_processed', $result['results']);
         $this->assertEquals(150, $result['results']['total_processed']);
+
+        $this->assertArrayHasKey('successful', $result['results']);
         $this->assertEquals(145, $result['results']['successful']);
+
+        $this->assertArrayHasKey('summary', $result);
+        $this->assertIsArray($result['summary']);
+        $this->assertArrayHasKey('success_rate', $result['summary']);
         $this->assertEquals(96.67, $result['summary']['success_rate']);
+
+        $this->assertArrayHasKey('failed_items', $result['results']);
+        $this->assertIsArray($result['results']['failed_items']);
         $this->assertCount(2, $result['results']['failed_items']);
     }
 

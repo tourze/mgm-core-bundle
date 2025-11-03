@@ -219,11 +219,28 @@ final class CampaignCrudControllerTest extends AbstractEasyAdminControllerTestCa
         $this->assertArrayHasKey('qualification', $config);
         $this->assertArrayHasKey('limits', $config);
 
-        // Test nested configuration values
+        // Test nested configuration values with proper type checking
+        $this->assertIsArray($config['rewards']);
+        $this->assertArrayHasKey('referrer', $config['rewards']);
+        $this->assertIsArray($config['rewards']['referrer']);
+        $this->assertArrayHasKey('amount', $config['rewards']['referrer']);
         $this->assertEquals(100, $config['rewards']['referrer']['amount']);
+
+        $this->assertArrayHasKey('referee', $config['rewards']);
+        $this->assertIsArray($config['rewards']['referee']);
+        $this->assertArrayHasKey('percentage', $config['rewards']['referee']);
         $this->assertEquals(15, $config['rewards']['referee']['percentage']);
+
+        $this->assertIsArray($config['qualification']);
+        $this->assertArrayHasKey('min_order_amount', $config['qualification']);
         $this->assertEquals(50.0, $config['qualification']['min_order_amount']);
+
+        $this->assertArrayHasKey('categories', $config['qualification']);
+        $this->assertIsArray($config['qualification']['categories']);
         $this->assertContains('electronics', $config['qualification']['categories']);
+
+        $this->assertIsArray($config['limits']);
+        $this->assertArrayHasKey('max_referrals_per_user', $config['limits']);
         $this->assertEquals(10, $config['limits']['max_referrals_per_user']);
     }
 

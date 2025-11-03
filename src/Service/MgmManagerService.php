@@ -36,15 +36,23 @@ class MgmManagerService
      */
     public function createCampaign(array $config): string
     {
+        $this->validateCampaignConfig($config);
+
+        $active = $this->convertToBool($config['active'] ?? true);
+        $windowDays = $this->convertToInt($config['windowDays'] ?? 7, 'Window days');
+        $attribution = $this->validateAttribution($config['attribution'] ?? 'last');
+        $selfBlock = $this->convertToBool($config['selfBlock'] ?? true);
+        $budgetLimit = $this->convertBudgetLimit($config['budgetLimit'] ?? null);
+
         $campaign = new Campaign();
         $campaign->setId($this->idGenerator->generate());
-        $campaign->setName($config['name']);
-        $campaign->setActive($config['active'] ?? true);
+        $campaign->setName($this->validateString($config['name'], 'Campaign name'));
+        $campaign->setActive($active);
         $campaign->setConfigJson($config);
-        $campaign->setWindowDays($config['windowDays'] ?? 7);
-        $campaign->setAttribution(Attribution::from($config['attribution'] ?? 'last'));
-        $campaign->setSelfBlock($config['selfBlock'] ?? true);
-        $campaign->setBudgetLimit(array_key_exists('budgetLimit', $config) ? (string) $config['budgetLimit'] : null);
+        $campaign->setWindowDays($windowDays);
+        $campaign->setAttribution(Attribution::from($attribution));
+        $campaign->setSelfBlock($selfBlock);
+        $campaign->setBudgetLimit($budgetLimit);
 
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
@@ -82,7 +90,7 @@ class MgmManagerService
             }
         );
 
-        return is_array($result) && array_key_exists('result', $result) ? (string) $result['result'] : (string) $result;
+        return $this->convertToString($result);
     }
 
     public function ingestEvidence(string $campaignId, Subject $referee, Evidence $evidence, string $idemKey): QualificationResult
@@ -119,5 +127,144 @@ class MgmManagerService
     public function getReferral(string $referralId): ?Referral
     {
         return $this->referralRepository->find($referralId);
+    }
+
+    /**
+     * 验证活动配置
+     *
+     * @param array<string, mixed> $config
+     */
+    private function validateCampaignConfig(array $config): void
+    {
+        if (!isset($config['name'])) {
+            throw new \InvalidArgumentException('Campaign name is required');
+        }
+    }
+
+    /**
+     * 验证字符串类型
+     */
+    private function validateString(mixed $value, string $fieldName): string
+    {
+        if (is_string($value)) {
+            return $value;
+        }
+
+        throw new \InvalidArgumentException("{$fieldName} must be a string");
+    }
+
+    /**
+     * 将混合类型转换为布尔值
+     */
+    private function convertToBool(mixed $value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        return (bool) $value;
+    }
+
+    /**
+     * 将混合类型转换为整数
+     */
+    private function convertToInt(mixed $value, string $fieldName): int
+    {
+        if (is_int($value)) {
+            return $value;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        throw new \InvalidArgumentException("{$fieldName} must be an integer");
+    }
+
+    /**
+     * 验证归因参数
+     */
+    private function validateAttribution(mixed $value): string|int
+    {
+        if (is_string($value) || is_int($value)) {
+            return $value;
+        }
+
+        throw new \InvalidArgumentException('Attribution must be a string or integer');
+    }
+
+    /**
+     * 转换预算限制
+     */
+    private function convertBudgetLimit(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_numeric($value)) {
+            return (string) $value;
+        }
+
+        if (is_string($value)) {
+            return $value;
+        }
+
+        throw new \InvalidArgumentException('Budget limit must be numeric or string');
+    }
+
+    /**
+     * 将混合类型转换为字符串
+     */
+    private function convertToString(mixed $value): string
+    {
+        // 处理数组类型（幂等性结果）
+        if (is_array($value) && array_key_exists('result', $value)) {
+            return $this->convertArrayResultToString($value);
+        }
+
+        // 处理基本类型
+        return $this->convertBasicTypeToString($value);
+    }
+
+    /**
+     * 将数组结果转换为字符串
+     *
+     * @param array{result: mixed} $value
+     */
+    private function convertArrayResultToString(array $value): string
+    {
+        if ($value['result'] === null) {
+            throw new \RuntimeException('Idempotency result cannot be null');
+        }
+        return $this->convertToString($value['result']);
+    }
+
+    /**
+     * 将基本类型转换为字符串
+     */
+    private function convertBasicTypeToString(mixed $value): string
+    {
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
+
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+
+        if (is_null($value)) {
+            throw new \RuntimeException('Idempotency result cannot be null');
+        }
+
+        if (is_object($value) && method_exists($value, '__toString')) {
+            return (string) $value;
+        }
+
+        throw new \RuntimeException('Cannot convert value to string: ' . gettype($value));
     }
 }

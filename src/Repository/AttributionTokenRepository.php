@@ -20,9 +20,12 @@ class AttributionTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, AttributionToken::class);
     }
 
+    /**
+     * @return AttributionToken|null
+     */
     public function findValidToken(string $token): ?AttributionToken
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
             ->where('t.token = :token')
             ->andWhere('t.expireTime > :now')
             ->setParameter('token', $token)
@@ -30,6 +33,8 @@ class AttributionTokenRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+
+        return $result instanceof AttributionToken ? $result : null;
     }
 
     /**
@@ -44,15 +49,20 @@ class AttributionTokenRepository extends ServiceEntityRepository
         ]);
     }
 
+    /**
+     * @return int
+     */
     public function deleteExpiredTokens(\DateTimeInterface $before): int
     {
-        return $this->createQueryBuilder('t')
+        $result = $this->createQueryBuilder('t')
             ->delete()
             ->where('t.expireTime < :before')
             ->setParameter('before', $before)
             ->getQuery()
             ->execute()
         ;
+
+        return is_numeric($result) ? (int) $result : 0;
     }
 
     public function save(AttributionToken $entity, bool $flush = true): void

@@ -416,6 +416,13 @@ class ReferralServiceTest extends AbstractIntegrationTestCase
 
         $campaign = new Campaign();
         $campaign->setId($this->idGenerator->generate());
+
+        $this->assertIsString($config['name'], 'Campaign name must be a string');
+        $this->assertIsBool($config['active'], 'Campaign active must be a boolean');
+        $this->assertIsInt($config['windowDays'], 'Campaign windowDays must be an integer');
+        $this->assertIsString($config['attribution'], 'Campaign attribution must be a string');
+        $this->assertIsBool($config['selfBlock'], 'Campaign selfBlock must be a boolean');
+
         $campaign->setName($config['name']);
         $campaign->setActive($config['active']);
         $campaign->setConfigJson($config);

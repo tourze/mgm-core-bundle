@@ -183,6 +183,10 @@ class CampaignRepositoryTest extends AbstractRepositoryTestCase
         $this->assertIsArray($config);
         $this->assertArrayHasKey('rewards', $config);
         $this->assertArrayHasKey('qualification', $config);
+        $this->assertIsArray($config['rewards']);
+        $this->assertArrayHasKey('referrer', $config['rewards']);
+        $this->assertIsArray($config['rewards']['referrer']);
+        $this->assertArrayHasKey('amount', $config['rewards']['referrer']);
         $this->assertSame(100, $config['rewards']['referrer']['amount']);
         $this->assertSame('10000.5000', $found->getBudgetLimit());
     }
