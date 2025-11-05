@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tourze\MgmCoreBundle\Entity;
 
-use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
@@ -18,7 +16,6 @@ use Tourze\MgmCoreBundle\Enum\Attribution;
     name: 'mgm_campaigns',
     options: ['comment' => 'MGM 活动表，存储推荐活动的配置信息']
 )]
-// Single-column indexes defined on properties via IndexColumn
 class Campaign implements \Stringable
 {
     use TimestampableAware;
