@@ -198,7 +198,7 @@ class MgmManagerService
      */
     private function convertBudgetLimit(mixed $value): ?string
     {
-        if ($value === null) {
+        if (null === $value) {
             return null;
         }
 
@@ -234,9 +234,10 @@ class MgmManagerService
      */
     private function convertArrayResultToString(array $value): string
     {
-        if ($value['result'] === null) {
+        if (null === $value['result']) {
             throw new \RuntimeException('Idempotency result cannot be null');
         }
+
         return $this->convertToString($value['result']);
     }
 
