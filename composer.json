@@ -1,6 +1,6 @@
 {
   "name": "tourze/mgm-core-bundle",
-  "description": "",
+  "description": "A comprehensive Member Get Member (MGM) referral system core bundle for Symfony applications",
   "type": "symfony-bundle",
   "license": "MIT",
   "require": {
